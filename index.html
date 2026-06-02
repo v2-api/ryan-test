@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CTF Flag Submission</title>
+
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #111827;
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .container {
+            background: #1f2937;
+            padding: 2rem;
+            border-radius: 12px;
+            width: 400px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.4);
+        }
+
+        h1 {
+            text-align: center;
+        }
+
+        label {
+            display: block;
+            margin-top: 1rem;
+            margin-bottom: 0.25rem;
+        }
+
+        select, input, button {
+            width: 100%;
+            padding: 0.75rem;
+            border-radius: 6px;
+            border: none;
+            box-sizing: border-box;
+        }
+
+        input, select {
+            background: #374151;
+            color: white;
+        }
+
+        button {
+            margin-top: 1rem;
+            background: #2563eb;
+            color: white;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        button:hover {
+            background: #1d4ed8;
+        }
+
+        #result {
+            margin-top: 1rem;
+            text-align: center;
+            font-weight: bold;
+        }
+
+        .correct {
+            color: #22c55e;
+        }
+
+        .incorrect {
+            color: #ef4444;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Flag Submission</h1>
+
+        <label for="level">Level</label>
+        <select id="level">
+            <option value="1">Level 1</option>
+            <option value="2">Level 2</option>
+            <option value="3">Level 3</option>
+            <option value="4">Level 4</option>
+            <option value="5">Level 5</option>
+        </select>
+
+        <label for="flag">Flag</label>
+        <input
+            type="text"
+            id="flag"
+            placeholder="picoCTF{...}"
+        >
+
+        <button onclick="checkFlag()">Submit Flag</button>
+
+        <div id="result"></div>
+    </div>
+
+    <script>
+        async function sha256(text) {
+            const encoder = new TextEncoder();
+            const data = encoder.encode(text);
+
+            const hashBuffer = await crypto.subtle.digest(
+                "SHA-256",
+                data
+            );
+
+            return Array.from(new Uint8Array(hashBuffer))
+                .map(b => b.toString(16).padStart(2, "0"))
+                .join("");
+        }
+
+        async function checkFlag() {
+            const level = document.getElementById("level").value;
+            const flagInput = document.getElementById("flag").value.trim();
+            const result = document.getElementById("result");
+
+            const hash = await sha256(level);
+            const expectedFlag = `picoCTF{${hash}}`;
+
+            if (flagInput === expectedFlag) {
+                result.textContent = "Correct flag!";
+                result.className = "correct";
+
+                confetti({
+                    particleCount: 150,
+                    spread: 100,
+                    origin: { y: 0.6 }
+                });
+            } else {
+                result.textContent = "Incorrect flag.";
+                result.className = "incorrect";
+            }
+        }
+    </script>
+</body>
+</html>
