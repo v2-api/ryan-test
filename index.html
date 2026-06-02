@@ -1,0 +1,21 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Admin Login</title>
+  </head>
+  <body>
+    <h1>
+      Login
+    </h1>
+    <button onClick="logIn()">Log In</button>
+    <script>
+      document.cookie = "notAdmin";
+      function logIn(){
+      if(document.cookie=="admin"){
+        alert("Logged in");
+      } else {
+        alert("cannor log in");
+      }}
+    </script>
+  </body>
+</html>
